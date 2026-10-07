@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>הדגמת מעקב לידים בוואטסאפ</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>הדגמה: מענה ומעקב אוטומטי בוואטסאפ</h1>
+  <p class="sub">הקלד את שם העסק של הלקוח, בחר תחום, ולחץ על התשובות כמו לקוח אמיתי. אפשר לדלג בזמן כדי לראות את הודעות המעקב.</p>
+  <div id="tabs"></div>
+  <div class="bizrow">
+    <input id="biz" placeholder="שם העסק">
+    <button id="restart" class="ghost">התחל מחדש</button>
+  </div>
+</header>
+<main>
+  <section class="phone">
+    <div class="bar">💬 וואטסאפ · מה שהלקוח רואה</div>
+    <div id="chat"></div>
+    <div id="input"></div>
+    <div id="timebar"></div>
+  </section>
+  <section class="ownerside">
+    <div class="bar">📱 מה שבעל העסק מקבל</div>
+    <div id="owner"></div>
+  </section>
+</main>
+<p class="note">זו הדגמה בלבד, ללא חיבור אמיתי לוואטסאפ. בהפעלה אמיתית משתמשים ב-WhatsApp Business API ושולחים רק לאנשים שפנו קודם.</p>
+<script src="flows.js"></script>
+<script src="engine.js"></script>
+</body>
+</html>
