@@ -2,7 +2,8 @@
   const $ = id => document.getElementById(id);
   const START = 21 * 60 + 7; // השיחה מתחילה ב-21:07, מחוץ לשעות העבודה
 
-  let flowKey = 'driving', st;
+  const P = (typeof PROSPECTS !== 'undefined' ? PROSPECTS : {})[new URLSearchParams(location.search).get('b')];
+  let flowKey = P ? P.flow : 'driving', st;
 
   const fmt = m => {
     const t = ((m % 1440) + 1440) % 1440;
@@ -18,7 +19,20 @@
     $('chat').textContent = '';
     $('owner').textContent = '';
     bot(fill(FLOWS[flowKey].greeting), 1);
-    nextStep();
+    st.ownerMsgs.push({ t: st.clock, text: '🔔 פנייה חדשה בוואטסאפ. העוזר כבר ענה ללקוח.' });
+    const cur = st;
+    renderOwner();
+    typing(true);
+    setTimeout(() => { if (cur !== st) return; typing(false); nextStep(); }, 900);
+  }
+
+  function typing(on) {
+    let t = $('typing');
+    if (!on) { if (t) t.remove(); return; }
+    if (t) return;
+    t = document.createElement('div'); t.id = 'typing'; t.className = 'msg bot typing';
+    for (let i = 0; i < 3; i++) t.append(document.createElement('i'));
+    $('chat').append(t); $('chat').scrollTop = $('chat').scrollHeight;
   }
 
   function addBubble(from, text, t) {
@@ -82,9 +96,17 @@
     st.answers[s.key] = text;
     if (s.isName) st.name = text;
     if (opt) st.score += opt.score || 0;
-    if (opt && opt.reply) bot(opt.reply, 0);
     st.fuIdx = 0; // הלקוח ענה: מאפסים את רצף המעקב
-    nextStep();
+    const cur = st;
+    $('input').textContent = ''; $('timebar').textContent = '';
+    renderOwner();
+    typing(true);
+    setTimeout(() => {
+      if (cur !== st) return;
+      typing(false);
+      if (opt && opt.reply) bot(opt.reply, 0);
+      nextStep();
+    }, 750);
   }
 
   function optOut(text) {
@@ -100,14 +122,13 @@
     const f = FLOWS[flowKey];
     bot(fill(f.handoff, { name: st.name || '', summary: summary() }), 1);
     system('✅ הליד הועבר לבעל העסק, עם סיכום מלא');
-    st.ownerMsgs.push({ t: st.clock, text: 'ליד חדש נכנס! פרטים בכרטיס למעלה. אם לא עונים תוך שעתיים תישלח תזכורת.' });
+    st.ownerMsgs.push({ t: st.clock, text: '🔔 ליד חדש מהוואטסאפ. הכרטיס למעלה. אם לא עונים תוך שעתיים תישלח תזכורת.' });
     renderOwner(); renderInput();
   }
 
   function renderOwner() {
     const o = $('owner'); o.textContent = '';
     const f = FLOWS[flowKey];
-    if (st.step < 0) return;
     const card = document.createElement('div'); card.className = 'card';
     const h = document.createElement('h3');
     const hot = st.score >= f.hotAt;
@@ -122,6 +143,11 @@
       const b = document.createElement('span'); b.textContent = v;
       r.append(a, b); card.append(r);
     });
+    if (st.done) {
+      const acts = document.createElement('div'); acts.className = 'acts';
+      ['📞 חיוג ללקוח', '💬 פתח שיחה'].forEach(x => { const a = document.createElement('span'); a.textContent = x; acts.append(a); });
+      card.append(acts);
+    }
     o.append(card);
     st.ownerMsgs.forEach(m => {
       const d = document.createElement('div'); d.className = 'ownermsg';
@@ -169,7 +195,7 @@
   }
   function mark() { [...$('tabs').children].forEach(b => b.classList.toggle('on', b.dataset.k === flowKey)); }
 
-  buildTabs();
+  if (!P) buildTabs(); else $('biz').value = P.name;
   $('biz').placeholder = FLOWS[flowKey].defaultBiz;
   $('restart').onclick = reset;
   let bizTimer;

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>הדמיה – מענה מיידי בוואטסאפ</title>
+<link rel="stylesheet" href="demo.css">
+</head>
+<body>
+<header class="hero">
+  <p class="eyebrow">הדמיה אישית</p>
+  <h1>כך הלקוחות של <span id="bizTitle"></span> יקבלו מענה בתוך שניות</h1>
+  <p class="lead">לקוח כותב בוואטסאפ ב-21:07 בערב, כשאי אפשר לענות. במקום להמתין עד הבוקר (ולפנות למתחרה), הוא מקבל מענה, עונה על כמה שאלות, ואתם מקבלים כרטיס ליד מסודר. לחצו על התשובות כמו לקוח אמיתי.</p>
+</header>
+
+<main class="stage">
+  <div class="col">
+    <div class="label">① מה שהלקוח רואה</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status"><span>21:07</span><span>●●● 5G ▮</span></div>
+        <div class="wa-head">
+          <span class="back">›</span>
+          <span class="avatar" id="avatar"></span>
+          <div class="who"><b id="phoneName"></b><small>עסק</small></div>
+        </div>
+        <div id="chat"></div>
+        <div id="input"></div>
+        <div class="wa-foot"><span>הודעה</span><span class="mic">🎤</span></div>
+      </div>
+    </div>
+    <div class="ctrl">
+      <small>בקרת הדמיה (לא מופיע ללקוח)</small>
+      <div id="timebar"></div>
+      <button id="restart" class="ghost">↺ התחל מחדש</button>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="label">② מה שאתם מקבלים</div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status"><span>21:08</span><span>●●● 5G ▮</span></div>
+        <div class="wa-head">
+          <span class="back">›</span>
+          <span class="avatar bot">🤖</span>
+          <div class="who"><b>העוזר הדיגיטלי</b><small>מעדכן אתכם על לידים</small></div>
+        </div>
+        <div id="owner"></div>
+      </div>
+    </div>
+  </div>
+  <input id="biz" type="hidden"><div id="tabs" hidden></div>
+</main>
+
+<section class="how">
+  <h2>איך זה בנוי</h2>
+  <p class="lead small">כל החלקים הם רכיבים מוכרים ומוכחים. התהליך מותאם לעסק שלכם, והשיחות נשארות אצלכם.</p>
+  <svg viewBox="0 0 920 400" role="img" aria-label="תרשים: לקוח, וואטסאפ, שרת תהליך, בעל העסק, מתזמן, Claude וגיליון לידים">
+    <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+    <g class="lines" stroke="currentColor" stroke-width="2" marker-end="url(#ar)" fill="none">
+      <line x1="730" y1="85" x2="702" y2="85"/><line x1="530" y1="85" x2="502" y2="85"/><line x1="330" y1="85" x2="302" y2="85"/>
+      <line x1="415" y1="135" x2="615" y2="248"/><line x1="415" y1="135" x2="415" y2="248"/><line x1="415" y1="135" x2="215" y2="248"/>
+    </g>
+    <g class="node"><rect x="730" y="45" width="170" height="80" rx="14"/><text x="815" y="78">📱 הלקוח</text><text class="s" x="815" y="102">כותב בוואטסאפ</text></g>
+    <g class="node"><rect x="530" y="45" width="170" height="80" rx="14"/><text x="615" y="74">WhatsApp</text><text class="s" x="615" y="98">Business Platform</text></g>
+    <g class="node main"><rect x="330" y="45" width="170" height="80" rx="14"/><text x="415" y="74">שרת התהליך</text><text class="s" x="415" y="98">שואל · מנקד · מתזמן</text></g>
+    <g class="node"><rect x="130" y="45" width="170" height="80" rx="14"/><text x="215" y="74">📲 בעל העסק</text><text class="s" x="215" y="98">התראה + כרטיס ליד</text></g>
+    <g class="node"><rect x="530" y="250" width="170" height="80" rx="14"/><text x="615" y="283">⏰ מתזמן</text><text class="s" x="615" y="307">מעקב: שעה · יום · 3 ימים</text></g>
+    <g class="node ai"><rect x="330" y="250" width="170" height="80" rx="14"/><text x="415" y="283">🧠 Claude</text><text class="s" x="415" y="307">מבין תשובות חופשיות</text></g>
+    <g class="node"><rect x="130" y="250" width="170" height="80" rx="14"/><text x="215" y="283">🗂️ גיליון לידים</text><text class="s" x="215" y="307">היסטוריה ודוח חודשי</text></g>
+  </svg>
+  <ol class="steps">
+    <li><b>הלקוח כותב</b> למספר העסק בוואטסאפ, והודעה נכנסת דרך WhatsApp Business Platform הרשמי של Meta.</li>
+    <li><b>שרת התהליך</b> מגיב בתוך שניות, שואל 4–5 שאלות קצרות ומנקד את הליד (חם / בינוני).</li>
+    <li><b>Claude</b> (שכבה אופציונלית) מבין תשובות חופשיות כמו "אחרי הצהריים ברמת גן", ועונה על שאלות נפוצות לפי מידע שאתם מאשרים.</li>
+    <li><b>אתם מקבלים</b> התראה עם כרטיס מסודר וכפתור חיוג. אם לא חוזרים תוך שעתיים, נשלחת תזכורת.</li>
+    <li><b>אם הלקוח נעלם,</b> יוצאות עד 3 הודעות מעקב מנומסות, ואז הכל נעצר. אפשר להסיר את עצמך בכתיבת "הסר".</li>
+  </ol>
+</section>
+
+<section class="how">
+  <h2>מה כלול</h2>
+  <ul class="inc">
+    <li>שאלות והודעות מותאמות לעסק, בעברית טבעית</li>
+    <li>מענה גם בלילה, בסופי שבוע ובזמן שעובדים</li>
+    <li>כרטיס ליד לכל פנייה, עם סיכום ונקודות</li>
+    <li>מעקב מנומס ללקוחות שנעלמו, ללא הטרדה</li>
+    <li>דוח חודשי: כמה פניות נכנסו, כמה נענו ומי חזר</li>
+  </ul>
+</section>
+
+<footer>
+  הדמיה להמחשה בלבד, ללא חיבור אמיתי לוואטסאפ. <span id="disc"></span>
+</footer>
+
+<script src="flows.js"></script>
+<script src="prospects.js"></script>
+<script>
+(function () {
+  const P = PROSPECTS[new URLSearchParams(location.search).get('b')] || PROSPECTS.landau;
+  if (!PROSPECTS[new URLSearchParams(location.search).get('b')]) history.replaceState(null, '', '?b=landau');
+  document.documentElement.style.setProperty('--acc', P.accent);
+  document.getElementById('bizTitle').textContent = P.name;
+  document.getElementById('phoneName').textContent = P.name;
+  document.getElementById('avatar').textContent = P.initial;
+  document.getElementById('disc').textContent = 'העסק "' + P.name + '" לא קשור להדמיה ולא אישר אותה.';
+  document.title = 'הדמיה – ' + P.name;
+})();
+</script>
+<script src="engine.js"></script>
+</body>
+</html>
