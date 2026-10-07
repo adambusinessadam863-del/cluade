@@ -98,8 +98,8 @@
 <script src="prospects.js"></script>
 <script>
 (function () {
-  const P = PROSPECTS[new URLSearchParams(location.search).get('b')] || PROSPECTS.landau;
-  if (!PROSPECTS[new URLSearchParams(location.search).get('b')]) history.replaceState(null, '', '?b=landau');
+  const P = PROSPECTS[new URLSearchParams(location.search).get('b')] || PROSPECTS.reut;
+  if (!PROSPECTS[new URLSearchParams(location.search).get('b')]) history.replaceState(null, '', '?b=reut');
   document.documentElement.style.setProperty('--acc', P.accent);
   document.getElementById('bizTitle').textContent = P.name;
   document.getElementById('phoneName').textContent = P.name;

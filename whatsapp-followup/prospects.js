@@ -1,6 +1,6 @@
 // שלושה עסקים לדוגמה. השמות מגיעים מתוצאות חיפוש ציבוריות, ללא אישור מהעסקים.
 const PROSPECTS = {
-  landau: { flow: 'driving', name: 'חיים לנדאו – מורה נהיגה', initial: 'ח', city: 'ראשון לציון', accent: '#0f766e' },
-  masters: { flow: 'reno', name: 'מאסטרים בשיפוצים', initial: 'מ', city: 'ארצי', accent: '#b45309' },
-  ziva: { flow: 'pilates', name: 'סטודיו Ziva', initial: 'Z', city: 'פתח תקווה', accent: '#9d174d' }
+  reut: { flow: 'driving', name: 'רעות – בית הספר לנהיגה', initial: 'ר', city: 'מודיעין-מכבים-רעות', accent: '#0f766e' },
+  haon: { flow: 'driving', name: 'האון – בית ספר לנהיגה', initial: 'ה', city: 'טבריה', accent: '#1d4ed8' },
+  yadofek: { flow: 'moving', name: 'יד אופק הובלות', initial: 'י', city: 'פרדס חנה-כרכור', accent: '#b45309' }
 };

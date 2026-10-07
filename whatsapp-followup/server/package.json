@@ -1,0 +1,17 @@
+{
+  "name": "whatsapp-lead-followup",
+  "version": "0.1.0",
+  "private": true,
+  "description": "שרת הפניות: מענה מיידי ומעקב לידים בוואטסאפ (Meta Cloud API)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --env-file=.env server.js",
+    "test": "node test.js"
+  },
+  "engines": {
+    "node": ">=20.6"
+  },
+  "optionalDependencies": {
+    "@anthropic-ai/sdk": "^0.131.0"
+  }
+}
