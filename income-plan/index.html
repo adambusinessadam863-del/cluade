@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>$5,400 Month Plan</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>$5,400 Month Plan</h1>
+  <div class="goal">
+    <div class="bar"><div id="fill"></div></div>
+    <p><strong id="earned">$0</strong> of <span id="target">$5,400</span> · <span id="left"></span></p>
+    <p id="pace"></p>
+  </div>
+</header>
+<main>
+  <section>
+    <h2>Income streams</h2>
+    <div id="streams"></div>
+  </section>
+  <section>
+    <h2>Outreach pipeline</h2>
+    <form id="leadForm">
+      <input id="leadName" placeholder="Lead / business name" required>
+      <input id="leadValue" type="number" min="0" placeholder="Quote $" required>
+      <button>Add</button>
+    </form>
+    <div id="leads"></div>
+  </section>
+  <section>
+    <h2>Pitch templates</h2>
+    <details><summary>Local business</summary>
+      <p>Hi {name}, I noticed your website/Google listing is missing a few things that cost you customers (mobile layout, hours, booking). I can fix it in 3 days for a flat $500. Want a free 2-minute audit first?</p></details>
+    <details><summary>Freelance gig</summary>
+      <p>Hi {name}, I can deliver {task} by {date} for a fixed $600. Here's a similar example: {link}. Happy to start today if the scope fits.</p></details>
+    <details><summary>Follow-up (day 3)</summary>
+      <p>Quick follow-up on my note: I have one slot open this week. Want me to send a short plan and fixed quote?</p></details>
+  </section>
+  <section>
+    <h2>Daily checklist</h2>
+    <div id="checklist"></div>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
