@@ -1,8 +1,8 @@
-# $5,400 Month Plan
+# ₪5,400 Month Plan
 
-Static, dependency-free tracker for a $5,400 monthly income goal.
+Static, dependency-free tracker for a ₪5,400 monthly income goal.
 Open `index.html` in a browser. Data is saved in localStorage.
 
-Streams: freelance sprints ($2,400), local business packages ($1,500),
-selling unused items ($800), quick gigs ($700).
+Streams: CVs/LinkedIn (₪2,000), social content packs (₪1,800), translation (₪800), formal letters (₪800).
+A services menu lists ten ways to use Claude with price estimates.
 Leads marked **won** count toward the total.

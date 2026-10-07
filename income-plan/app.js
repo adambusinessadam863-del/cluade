@@ -1,21 +1,21 @@
 const TARGET = 5400;
 const DEFAULT_STREAMS = [
-  {name:'Freelance sprints (4 × $600)', target:2400, earned:0},
-  {name:'Local business packages (3 × $500)', target:1500, earned:0},
-  {name:'Sell unused stuff', target:800, earned:0},
-  {name:'Quick gig work', target:700, earned:0},
+  {name:'CVs, LinkedIn & cover letters (10 × ₪200)', target:2000, earned:0},
+  {name:'Social media content packs (2 clients × ₪900)', target:1800, earned:0},
+  {name:'Translation / proofreading Hebrew-English', target:800, earned:0},
+  {name:'Formal letters & appeals (6 × ₪130)', target:800, earned:0},
 ];
 const CHECKS = [
-  'Send 15 outreach messages','Follow up on leads from 3 days ago','Post 1 portfolio/work sample',
-  'List 2 items for sale','Deliver or progress one paid job','Log today\'s income here'];
+  'Send 15 outreach messages','Follow up on leads from 3 days ago','Post 1 sample of your work (before/after CV, sample posts)',
+  'Answer every lead within 1 hour','Deliver or progress one paid job','Log today\'s income here'];
 const STAGES = ['contacted','replied','quoted','won','lost'];
 
 const load = (k,d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } };
 const save = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} };
 const $ = id => document.getElementById(id);
-const money = n => '$' + Math.round(n).toLocaleString();
+const money = n => '₪' + Math.round(n).toLocaleString();
 
-let streams = load('streams', DEFAULT_STREAMS);
+let streams = load('streams2', DEFAULT_STREAMS);
 let leads = load('leads', []);
 const today = new Date().toISOString().slice(0,10);
 let checks = load('checks', {});
@@ -42,7 +42,7 @@ function render(){
     const r = document.createElement('div'); r.className='row';
     r.innerHTML = `<div class="name">${s.name}<div class="mut">target ${money(s.target)}</div></div>
       <input type="number" min="0" value="${s.earned}" aria-label="earned">`;
-    r.querySelector('input').onchange = e => { s.earned = +e.target.value||0; save('streams',streams); render(); };
+    r.querySelector('input').onchange = e => { s.earned = +e.target.value||0; save('streams2',streams); render(); };
     $('streams').append(r);
   });
 
@@ -74,3 +74,23 @@ $('leadForm').onsubmit = e => {
   save('leads',leads); e.target.reset(); render();
 };
 render();
+
+const MENU = [
+ ['CV + LinkedIn rewrite','₪150–300 each','Claude drafts, you tailor to the job. 24h turnaround. Easiest first sale.'],
+ ['Social media content packs','₪800–1,500 / month per client','12–20 posts, captions, ideas. Recurring income.'],
+ ['Translation & proofreading (HE↔EN)','₪0.25–0.5 / word','Reviewed by you for tone. Good for students and small firms.'],
+ ['Formal letters & appeals','₪100–250 each','Fines, insurance, landlord, bank, army/university requests. Check facts yourself; not legal advice.'],
+ ['Product descriptions','₪20–50 per listing','Yad2, Etsy, Amazon, Facebook shops. Sell in batches of 20.'],
+ ['Business plans & grant applications','₪500–1,500','Needs your editing, a bigger ticket per client.'],
+ ['Study summaries & practice tests','₪80–150 / subject','For students you know. Also private tutoring prep: ₪100–150 / hr.'],
+ ['Speeches & video scripts','₪150–500 each','Weddings, bar mitzvah, YouTube/TikTok scripts.'],
+ ['Research & market summaries','₪300–700 per report','Competitor lists, price comparisons, trend briefs.'],
+ ['Interview & language practice coaching','₪120–180 / session','You sit with the client; Claude prepares questions and feedback.'],
+];
+MENU.forEach(([n,p,d])=>{
+  const r=document.createElement('div');r.className='row';
+  const a=document.createElement('div');a.className='name';
+  const b=document.createElement('strong');b.textContent=n;
+  const c=document.createElement('div');c.className='mut';c.textContent=p+' · '+d;
+  a.append(b,c);r.append(a);document.getElementById('menu').append(r);
+});
