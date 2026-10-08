@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>מחולל הצעות מחיר</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div>
+    <p class="eyebrow">הצעת מחיר תוך 60 שניות</p>
+    <h1>מחולל הצעות מחיר</h1>
+  </div>
+  <nav id="tabs" aria-label="סוג עסק"></nav>
+</header>
+
+<main class="grid">
+  <section class="card" id="formCard">
+    <h2>פרטי העבודה</h2>
+    <div id="fields" class="fields"></div>
+
+    <details class="settings">
+      <summary>הגדרות העסק והלקוח</summary>
+      <div class="fields">
+        <label class="f wide"><span>שם העסק</span><input id="bizName" value="שם העסק"></label>
+        <label class="f"><span>טלפון העסק</span><input id="bizPhone" inputmode="tel" placeholder="050-0000000"></label>
+        <label class="f"><span>צבע המותג</span><input id="bizColor" type="color" value="#0f766e"></label>
+        <label class="f"><span>שם הלקוח</span><input id="custName"></label>
+        <label class="f"><span>טלפון הלקוח</span><input id="custPhone" inputmode="tel" placeholder="050-0000000"></label>
+        <label class="f"><span>הנחה (%)</span><input id="discount" type="number" min="0" max="50" value="0"></label>
+        <label class="f"><span>תוקף ההצעה (ימים)</span><input id="valid" type="number" min="1" max="60" value="7"></label>
+        <label class="f check wide"><input id="vat" type="checkbox" checked><span>הוסף מע״מ (18%)</span></label>
+      </div>
+      <p class="hint">המחירים בתבניות הם דוגמאות. מחליפים אותם במחירון של העסק לפני שימוש.</p>
+    </details>
+  </section>
+
+  <section class="card preview-card">
+    <h2>תצוגה מקדימה</h2>
+    <div id="preview"></div>
+  </section>
+</main>
+
+<footer class="bar">
+  <div class="total"><small>סה״כ</small><b id="total">₪0</b></div>
+  <button id="wa" class="primary">שלח בוואטסאפ</button>
+  <button id="print">הדפס / PDF</button>
+  <button id="copy">העתק טקסט</button>
+</footer>
+
+<script src="../core.js"></script>
+<script src="../presets.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
