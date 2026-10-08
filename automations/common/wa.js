@@ -44,6 +44,13 @@ function verifySignature(raw, header, appSecret) {
   return exp.length === got.length && crypto.timingSafeEqual(exp, got);
 }
 
+// השוואת טוקן ניהול בזמן קבוע (נגד ניחוש לפי זמן תגובה)
+function bearerOk(req, token) {
+  if (!token) return false;
+  const a = Buffer.from(String(req.headers.authorization || '')), b = Buffer.from('Bearer ' + token);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
 // מחלץ הודעה נכנסת לצורה אחידה: { text, id } (id = payload של כפתור/רשימה אם יש)
 function extractInbound(msg) {
   switch (msg.type) {
@@ -102,4 +109,4 @@ function normalizePhone(raw) {
   return d;
 }
 
-module.exports = { createWA, createNotifier, verifySignature, extractInbound, flattenWebhook, createWebhookServer, normalizePhone };
+module.exports = { bearerOk, createWA, createNotifier, verifySignature, extractInbound, flattenWebhook, createWebhookServer, normalizePhone };

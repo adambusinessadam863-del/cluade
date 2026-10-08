@@ -162,5 +162,22 @@ reset(); s = mk(); s.importAppointments('name,phone,start,service\nדנה כהן
   assert.strictEqual(owner.filter(t => t.includes('להזיז')).length, 1);
   ok('dedupe');
 
+  // ---- שכבת HTTP: אימות webhook, חתימה, ונקודות ניהול מוגנות ----
+  const crypto = require('crypto');
+  reset(); s = mk({ verifyToken: 'vt', appSecret: 'sec', adminToken: 'adm' });
+  await new Promise(r => s.server.listen(0, r)); const base = 'http://127.0.0.1:' + s.server.address().port;
+  assert.strictEqual(await (await fetch(`${base}/webhook?hub.mode=subscribe&hub.verify_token=vt&hub.challenge=42`)).text(), '42');
+  const body = JSON.stringify(msg('972501111111', 'שלום'));
+  assert.strictEqual((await fetch(base + '/webhook', { method: 'POST', body })).status, 401);
+  const sig = 'sha256=' + crypto.createHmac('sha256', 'sec').update(body).digest('hex');
+  assert.strictEqual((await fetch(base + '/webhook', { method: 'POST', body, headers: { 'x-hub-signature-256': sig } })).status, 200);
+  assert.strictEqual((await fetch(base + '/stats')).status, 404);
+  assert.strictEqual((await fetch(base + '/stats', { headers: { authorization: 'Bearer wrong' } })).status, 404);
+  assert.strictEqual((await fetch(base + '/stats', { headers: { authorization: 'Bearer adm' } })).status, 200);
+  const imp = await (await fetch(base + '/import', { method: 'POST', headers: { authorization: 'Bearer adm' }, body: 'name,phone,start\nדנה,0501111111,2026-10-30 17:00' })).json();
+  assert.strictEqual(imp.added, 1);
+  s.server.close();
+  ok('http: webhook verify, signature, protected admin routes, csv import');
+
   console.log('\nall reminder tests passed');
 })().catch(e => { console.error(e); process.exit(1); });

@@ -222,7 +222,11 @@ function createApp(cfg, io = {}) {
     const got = Buffer.from(header);
     return exp.length === got.length && crypto.timingSafeEqual(exp, got);
   }
-  const authed = req => cfg.adminToken && req.headers.authorization === 'Bearer ' + cfg.adminToken;
+  const authed = req => {
+    if (!cfg.adminToken) return false;
+    const a = Buffer.from(String(req.headers.authorization || '')), b = Buffer.from('Bearer ' + cfg.adminToken);
+    return a.length === b.length && crypto.timingSafeEqual(a, b); // זמן קבוע
+  };
 
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://x');

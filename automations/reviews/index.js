@@ -3,7 +3,7 @@
 // והודעות פרטיות שחוזרות מהלקוחות מועברות לבעל העסק.
 const fs = require('fs');
 const path = require('path');
-const { createWA, createNotifier, flattenWebhook, extractInbound, createWebhookServer, normalizePhone } = require('../common/wa.js');
+const { bearerOk, createWA, createNotifier, flattenWebhook, extractInbound, createWebhookServer, normalizePhone } = require('../common/wa.js');
 const { zonedToUtc, localParts, parseCsv } = require('../reminders/index.js');
 
 const DEFAULTS = {
@@ -89,7 +89,7 @@ function createReviewService(userCfg, io = {}) {
   }
 
   const stats = () => { const v = Object.values(db.visits); return { visits: v.length, requested: v.filter(x => x.status === 'sent').length, feedback: db.feedback.length, optedOut: Object.keys(db.optedOut).length }; };
-  const authed = req => cfg.adminToken && req.headers.authorization === 'Bearer ' + cfg.adminToken;
+  const authed = req => bearerOk(req, cfg.adminToken);
   const server = createWebhookServer({
     verifyToken: cfg.verifyToken, appSecret: cfg.appSecret, allowUnsigned: cfg.allowUnsigned, onPayload: processPayload,
     routes(req, res, url) {

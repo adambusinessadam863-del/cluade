@@ -2,7 +2,7 @@
 // תזכורות תורים + החזרת שעות שבוטלו (רשימת המתנה). נשלחות דרך WhatsApp Cloud API (תבניות מאושרות).
 const fs = require('fs');
 const path = require('path');
-const { createWA, createNotifier, flattenWebhook, extractInbound, createWebhookServer, normalizePhone } = require('../common/wa.js');
+const { bearerOk, createWA, createNotifier, flattenWebhook, extractInbound, createWebhookServer, normalizePhone } = require('../common/wa.js');
 
 // ---------- זמן ----------
 function tzOffsetMinutes(utcMs, tz) {
@@ -232,7 +232,7 @@ function createReminderService(userCfg, io = {}) {
   }
 
   // --- HTTP ---
-  const authed = req => cfg.adminToken && req.headers.authorization === 'Bearer ' + cfg.adminToken;
+  const authed = req => bearerOk(req, cfg.adminToken);
   const server = createWebhookServer({
     verifyToken: cfg.verifyToken, appSecret: cfg.appSecret, allowUnsigned: cfg.allowUnsigned,
     onPayload: p => processPayload(p),
