@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>הדמיה – תזכורות תורים והחזרת שעות</title>
+<link rel="stylesheet" href="../assets/phone.css">
+<style>
+.sched{background:#fff;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.15);overflow:hidden}
+.sched h3{margin:0;padding:10px 12px;font-size:.95rem;background:rgba(15,118,110,.1)}
+.row{display:flex;justify-content:space-between;gap:8px;padding:9px 12px;border-top:1px solid #eee;font-size:.9rem}
+.row b{min-width:44px;direction:ltr}
+.st{font-size:.8rem;white-space:nowrap}
+.kpi{display:flex;gap:8px}.kpi div{flex:1;background:#fff;border-radius:10px;padding:8px;text-align:center;font-size:.76rem;color:#667781;box-shadow:0 1px 1px rgba(0,0,0,.1)}
+.kpi b{display:block;font-size:1.3rem;color:var(--acc)}
+.idle{color:#8696a0;text-align:center;margin-top:30%;font-size:.9rem}
+.bizrow{display:flex;gap:8px;margin:12px 0 0;max-width:420px}
+.bizrow input{flex:1;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">הדמיה</p>
+  <h1>פחות תורים שנעלמים. ושעה שבוטלה לא נשארת ריקה.</h1>
+  <p class="lead">יום לפני התור הלקוח מקבל תזכורת עם שלושה כפתורים. מי שמבטל משחרר שעה, והמערכת מציעה אותה אוטומטית למי שברשימת ההמתנה. לחצו על הכפתורים בטלפון הראשון.</p>
+  <div class="bizrow"><input id="biz" placeholder="שם העסק (לדוגמה: סטודיו לפילאטיס)"></div>
+
+  <div class="stage">
+    <div class="col">
+      <div class="label">① הלקוחה: דנה</div>
+      <div class="phone"><div class="screen">
+        <div class="status"><span id="clock1">17:30</span><span>●●● 5G ▮</span></div>
+        <div class="wa-head"><span class="back">›</span><span class="avatar" id="av">ס</span><div class="who"><b id="bn">העסק שלך</b><small>עסק</small></div></div>
+        <div class="chat" id="c1"></div>
+        <div class="wa-foot"><span>הודעה</span><span class="mic">🎤</span></div>
+      </div></div>
+    </div>
+    <div class="col">
+      <div class="label">② אתם (בעל העסק)</div>
+      <div class="phone"><div class="screen">
+        <div class="status"><span>17:31</span><span>●●● 5G ▮</span></div>
+        <div class="wa-head"><span class="back">›</span><span class="avatar bot">🤖</span><div class="who"><b>העוזר הדיגיטלי</b><small>מעדכן אתכם</small></div></div>
+        <div class="panel" id="owner"></div>
+      </div></div>
+    </div>
+    <div class="col">
+      <div class="label">③ גל (ברשימת המתנה)</div>
+      <div class="phone"><div class="screen">
+        <div class="status"><span id="clock3">17:35</span><span>●●● 5G ▮</span></div>
+        <div class="wa-head"><span class="back">›</span><span class="avatar" id="av3">ס</span><div class="who"><b id="bn3">העסק שלך</b><small>עסק</small></div></div>
+        <div class="chat" id="c3"><div class="idle">עדיין אין הודעות</div></div>
+        <div class="wa-foot"><span>הודעה</span><span class="mic">🎤</span></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="ctrl" style="align-items:center"><button class="ghost" id="reset">↺ התחל מחדש</button></div>
+
+  <section class="how">
+    <h2>מה קורה מאחורי הקלעים</h2>
+    <ol>
+      <li>רשימת התורים נכנסת מגיליון (CSV) או מייצוא של היומן. מספרי טלפון וזמנים נבדקים אוטומטית (כולל מעבר שעון קיץ).</li>
+      <li>תזכורת יוצאת 24 שעות לפני, ושנייה 3 שעות לפני רק למי שלא אישר. לא בלילה ולא בשבת.</li>
+      <li>אישור, ביטול או בקשה להזיז נרשמים מיד, ואתם מקבלים התראה. בערב מגיע סיכום של מחר.</li>
+      <li>שעה שבוטלה מוצעת למי שברשימת ההמתנה. אם לא ענה תוך 30 דקות, ההצעה עוברת לבא בתור.</li>
+    </ol>
+  </section>
+  <div class="foot">הדמיה להמחשה בלבד. השמות בדוגמה בדויים, ואין חיבור אמיתי לוואטסאפ.</div>
+</div>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  let biz = 'העסק שלך', state;
+  const SLOT = 'יום שישי, 09.10 בשעה 17:00';
+
+  function bubble(root, from, text, time, buttons) {
+    const d = document.createElement('div'); d.className = 'msg ' + from;
+    const p = document.createElement('div'); p.textContent = text; d.append(p);
+    if (buttons) { const q = document.createElement('div'); q.className = 'qr'; buttons.forEach(b => { const x = document.createElement('button'); x.textContent = b[0]; x.onclick = () => { [...q.children].forEach(y => (y.disabled = true)); b[1](); }; q.append(x); }); d.append(q); }
+    const t = document.createElement('span'); t.className = 'time'; t.textContent = time; d.append(t);
+    root.append(d); root.scrollTop = root.scrollHeight;
+  }
+  const sys = (root, text) => { const d = document.createElement('div'); d.className = 'sys'; d.textContent = text; root.append(d); root.scrollTop = root.scrollHeight; };
+
+  function renderOwner() {
+    const o = $('owner'); o.textContent = '';
+    const s = document.createElement('div'); s.className = 'sched';
+    const h = document.createElement('h3'); h.textContent = '📅 מחר, יום שישי'; s.append(h);
+    state.rows.forEach(r => {
+      const row = document.createElement('div'); row.className = 'row';
+      const b = document.createElement('b'); b.textContent = r.time;
+      const n = document.createElement('span'); n.textContent = r.name + (r.service ? ' · ' + r.service : '');
+      const st = document.createElement('span'); st.className = 'st'; st.textContent = r.status;
+      row.append(b, n, st); s.append(row);
+    });
+    o.append(s);
+    const k = document.createElement('div'); k.className = 'kpi';
+    [['שעות שהוחזרו', state.recovered], ['מאושרים', state.rows.filter(r => r.status.startsWith('✅')).length]].forEach(([l, v]) => { const d = document.createElement('div'); const b = document.createElement('b'); b.textContent = v; d.append(b, l); k.append(d); });
+    o.append(k);
+    state.notes.forEach(n => { const d = document.createElement('div'); d.className = 'note'; d.textContent = n; o.append(d); });
+  }
+  const note = t => { state.notes.push(t); renderOwner(); $('owner').scrollTop = 1e6; };
+
+  function reset() {
+    biz = $('biz').value.trim() || 'העסק שלך';
+    $('bn').textContent = $('bn3').textContent = biz; $('av').textContent = $('av3').textContent = biz.charAt(0);
+    document.title = 'הדמיה – ' + biz;
+    state = { notes: [], recovered: 0, rows: [
+      { time: '09:00', name: 'יוסי לוי', service: 'שיעור', status: '✅ מאושר' },
+      { time: '13:30', name: 'רות אבני', service: 'שיעור', status: '⏳ ממתין' },
+      { time: '17:00', name: 'דנה כהן', service: 'שיעור', status: '⏳ ממתין' } ] };
+    $('c1').textContent = ''; $('c3').innerHTML = '<div class="idle">עדיין אין הודעות</div>';
+    sys($('c1'), 'יום חמישי 17:00 · 24 שעות לפני התור');
+    bubble($('c1'), 'bot', `שלום דנה, תזכורת לתור שלך ל${'שיעור'} ב${SLOT}.\nנשמח לאישור הגעה 🙏`, '17:00', [
+      ['מאשר/ת', () => { bubble($('c1'), 'user', 'מאשר/ת', '17:02'); setTimeout(() => { bubble($('c1'), 'bot', 'מעולה, נתראה יום שישי בשעה 17:00 ✅', '17:02'); state.rows[2].status = '✅ מאושר'; renderOwner(); }, 600); }],
+      ['מבטל/ת', () => { bubble($('c1'), 'user', 'מבטל/ת', '17:02'); setTimeout(() => cancel(), 600); }],
+      ['להזיז', () => { bubble($('c1'), 'user', 'להזיז', '17:02'); setTimeout(() => { bubble($('c1'), 'bot', 'קיבלנו, נחזור אליך עם מועד חדש 🙂', '17:02'); state.rows[2].status = '🔁 ביקשה להזיז'; note('🔁 דנה כהן ביקשה להזיז את התור של מחר 17:00. טלפון: +972501111111'); renderOwner(); }, 600); }]
+    ]);
+    renderOwner();
+  }
+
+  function cancel() {
+    bubble($('c1'), 'bot', 'התור בוטל ✅ אם זו טעות, כתבו "אישור".', '17:02');
+    state.rows[2].status = '❌ בוטל'; note('❌ דנה כהן ביטלה: ' + SLOT); renderOwner();
+    setTimeout(() => {
+      $('c3').textContent = ''; sys($('c3'), 'לפני רגע');
+      bubble($('c3'), 'bot', `שלום גל, התפנתה שעה אצלנו: ${SLOT}.\nההצעה שמורה לך ל-30 דקות.`, '17:03', [
+        ['אני לוקח/ת', () => { bubble($('c3'), 'user', 'אני לוקח/ת', '17:05'); setTimeout(() => { bubble($('c3'), 'bot', `מעולה גל! קבענו לך ${SLOT} ✅`, '17:05'); state.rows[2] = { time: '17:00', name: 'גל (מרשימת המתנה)', service: 'שיעור', status: '✅ מאושר' }; state.recovered = 1; note('✅ גל תפס את השעה של דנה: ' + SLOT + '. השעה לא נשארה ריקה.'); renderOwner(); }, 600); }],
+        ['לא תודה', () => { bubble($('c3'), 'user', 'לא תודה', '17:05'); bubble($('c3'), 'bot', 'בסדר, תודה! נשאיר אותך ברשימה 🙂', '17:05'); note('⚠️ גל סירב. ההצעה עוברת לבא בתור.'); }]
+      ]);
+      note('📨 נשלחה הצעה אוטומטית לגל, הראשון ברשימת ההמתנה.');
+    }, 900);
+  }
+
+  $('reset').onclick = reset; $('biz').addEventListener('input', () => { clearTimeout(window.__t); window.__t = setTimeout(reset, 500); });
+  reset();
+})();
+</script>
+</body>
+</html>
