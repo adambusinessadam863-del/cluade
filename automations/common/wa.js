@@ -3,11 +3,12 @@
 const http = require('http');
 const crypto = require('crypto');
 
-function createWA({ graphBase = 'https://graph.facebook.com', graphVersion = 'v23.0', phoneId, token, fetch: fetchFn = fetch }) {
+// ברירת מחדל: Meta Cloud API ישירות. עם ספק (BSP) כמו 360dialog מגדירים url מלא ו-headers משלו.
+function createWA({ graphBase = 'https://graph.facebook.com', graphVersion = 'v23.0', phoneId, token, url, headers, fetch: fetchFn = fetch }) {
   async function send(to, payload) {
-    const res = await fetchFn(`${graphBase}/${graphVersion}/${phoneId}/messages`, {
+    const res = await fetchFn(url || `${graphBase}/${graphVersion}/${phoneId}/messages`, {
       method: 'POST',
-      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...(headers || { Authorization: 'Bearer ' + token }) },
       body: JSON.stringify({ messaging_product: 'whatsapp', recipient_type: 'individual', to, ...payload })
     });
     if (!res.ok) console.error('WhatsApp send failed', res.status, await res.text().catch(() => ''));
@@ -76,14 +77,14 @@ function flattenWebhook(payload) {
 }
 
 // שרת HTTP: אימות webhook (GET), קבלה חתומה (POST), ונתיבים נוספים (למשל admin)
-function createWebhookServer({ verifyToken, appSecret, allowUnsigned = false, onPayload, routes = () => false }) {
+function createWebhookServer({ verifyToken, appSecret, allowUnsigned = false, path = '/webhook', onPayload, routes = () => false }) {
   return http.createServer((req, res) => {
     const url = new URL(req.url, 'http://x');
-    if (req.method === 'GET' && url.pathname === '/webhook') {
+    if (req.method === 'GET' && url.pathname === path) {
       const ok = url.searchParams.get('hub.mode') === 'subscribe' && verifyToken && url.searchParams.get('hub.verify_token') === verifyToken;
       res.writeHead(ok ? 200 : 403); return res.end(ok ? url.searchParams.get('hub.challenge') : 'forbidden');
     }
-    if (req.method === 'POST' && url.pathname === '/webhook') {
+    if (req.method === 'POST' && url.pathname === path) {
       const chunks = []; let size = 0;
       req.on('data', c => { size += c.length; if (size > 1e6) req.destroy(); else chunks.push(c); });
       req.on('end', () => {

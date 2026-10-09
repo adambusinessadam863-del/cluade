@@ -8,39 +8,45 @@
   const sel = (id, label, options, def) => ({ id, label, type: 'select', options, default: def });
 
   // ---------- הובלות ----------
-  const MOVERS_BASE = [0, 900, 1200, 1500, 1900, 2300, 2800, 3300, 3800, 4300, 4800];
-  const movers = {
-    id: 'movers', tab: 'הובלות', prefix: 'HV', title: 'הובלת דירה',
-    fields: [
-      num('rooms', 'מספר חדרים', 1, 10, 3), num('distance', 'מרחק (ק״מ)', 0, 400, 15),
-      num('floorFrom', 'קומה במוצא', 0, 30, 2), bool('elevFrom', 'יש מעלית במוצא'),
-      num('floorTo', 'קומה ביעד', 0, 30, 1), bool('elevTo', 'יש מעלית ביעד', true),
-      sel('packing', 'אריזה', [{ v: 'none', label: 'ללא' }, { v: 'partial', label: 'חלקית' }, { v: 'full', label: 'מלאה' }], 'none'),
-      num('piano', 'פסנתר', 0, 3, 0), num('safe', 'כספת כבדה', 0, 3, 0),
-      num('assembly', 'חדרים לפירוק והרכבה', 0, 10, 0), bool('crane', 'מנוף')
-    ],
-    lines(i) {
-      const base = MOVERS_BASE[i.rooms];
-      const L = [{ label: `הובלת דירת ${i.rooms} חדרים`, qty: 1, unitPrice: base }];
-      const extraKm = Math.max(0, i.distance - 20);
-      L.push({ label: 'מרחק מעבר ל-20 ק״מ', qty: extraKm, unit: 'ק״מ', unitPrice: 4 });
-      if (!i.elevFrom && i.floorFrom > 0) L.push({ label: 'מדרגות במוצא (ללא מעלית)', note: `קומה ${i.floorFrom}`, qty: i.floorFrom, unit: 'קומות', unitPrice: 80 });
-      if (!i.elevTo && i.floorTo > 0) L.push({ label: 'מדרגות ביעד (ללא מעלית)', note: `קומה ${i.floorTo}`, qty: i.floorTo, unit: 'קומות', unitPrice: 80 });
-      if (i.packing === 'partial') L.push({ label: 'אריזה חלקית', qty: 1, unitPrice: Math.round(base * 0.15) });
-      if (i.packing === 'full') L.push({ label: 'אריזה מלאה', qty: 1, unitPrice: Math.round(base * 0.35) });
-      L.push({ label: 'פסנתר', qty: i.piano, unit: 'יח׳', unitPrice: 500 });
-      L.push({ label: 'כספת כבדה', qty: i.safe, unit: 'יח׳', unitPrice: 400 });
-      L.push({ label: 'פירוק והרכבה', qty: i.assembly, unit: 'חדרים', unitPrice: 150 });
-      if (i.crane) L.push({ label: 'מנוף', qty: 1, unitPrice: 650 });
-      return L;
-    },
-    summary: i => `הובלת דירת ${i.rooms} חדרים, ${i.distance} ק״מ`,
-    terms: ['המחיר מבוסס על הפרטים שנמסרו ויעודכן אם יתגלו הבדלים בפועל.', 'ביטול עד 48 שעות לפני המועד ללא עלות.', 'תשלום ביום ההובלה: מזומן, העברה או ביט.'],
-    // המרה מתשובות תהליך השיחה של ההובלות (whatsapp-followup/flows.js) לשדות ההצעה
-    fromLead(a = {}) {
-      return { inputs: { elevFrom: a['מעלית'] !== 'אין מעלית' }, note: [a['מוצא'] && a['יעד'] ? `${a['מוצא']} ← ${a['יעד']}` : '', a['מתי'] || ''].filter(Boolean).join(' · ') };
-    }
+  // מחירון ברירת מחדל (דוגמה). לכל לקוח יוצרים תבנית עם המחירון שלו: makeMovers({ ...MOVERS_PRICES, base: [...] })
+  const MOVERS_PRICES = {
+    base: [0, 900, 1200, 1500, 1900, 2300, 2800, 3300, 3800, 4300, 4800], // לפי מספר חדרים (אינדקס = חדרים)
+    freeKm: 20, perKm: 4, perFloor: 80, packingPartialPct: 0.15, packingFullPct: 0.35, piano: 500, safe: 400, assemblyPerRoom: 150, crane: 650
   };
+  function makeMovers(P = MOVERS_PRICES) {
+    return {
+      id: 'movers', tab: 'הובלות', prefix: 'HV', title: 'הובלת דירה',
+      fields: [
+        num('rooms', 'מספר חדרים', 1, 10, 3), num('distance', 'מרחק (ק״מ)', 0, 400, 15),
+        num('floorFrom', 'קומה במוצא', 0, 30, 2), bool('elevFrom', 'יש מעלית במוצא'),
+        num('floorTo', 'קומה ביעד', 0, 30, 1), bool('elevTo', 'יש מעלית ביעד', true),
+        sel('packing', 'אריזה', [{ v: 'none', label: 'ללא' }, { v: 'partial', label: 'חלקית' }, { v: 'full', label: 'מלאה' }], 'none'),
+        num('piano', 'פסנתר', 0, 3, 0), num('safe', 'כספת כבדה', 0, 3, 0),
+        num('assembly', 'חדרים לפירוק והרכבה', 0, 10, 0), bool('crane', 'מנוף')
+      ],
+      lines(i) {
+        const base = P.base[i.rooms];
+        const L = [{ label: `הובלת דירת ${i.rooms} חדרים`, qty: 1, unitPrice: base }];
+        L.push({ label: `מרחק מעבר ל-${P.freeKm} ק״מ`, qty: Math.max(0, i.distance - P.freeKm), unit: 'ק״מ', unitPrice: P.perKm });
+        if (!i.elevFrom && i.floorFrom > 0) L.push({ label: 'מדרגות במוצא (ללא מעלית)', note: `קומה ${i.floorFrom}`, qty: i.floorFrom, unit: 'קומות', unitPrice: P.perFloor });
+        if (!i.elevTo && i.floorTo > 0) L.push({ label: 'מדרגות ביעד (ללא מעלית)', note: `קומה ${i.floorTo}`, qty: i.floorTo, unit: 'קומות', unitPrice: P.perFloor });
+        if (i.packing === 'partial') L.push({ label: 'אריזה חלקית', qty: 1, unitPrice: Math.round(base * P.packingPartialPct) });
+        if (i.packing === 'full') L.push({ label: 'אריזה מלאה', qty: 1, unitPrice: Math.round(base * P.packingFullPct) });
+        L.push({ label: 'פסנתר', qty: i.piano, unit: 'יח׳', unitPrice: P.piano });
+        L.push({ label: 'כספת כבדה', qty: i.safe, unit: 'יח׳', unitPrice: P.safe });
+        L.push({ label: 'פירוק והרכבה', qty: i.assembly, unit: 'חדרים', unitPrice: P.assemblyPerRoom });
+        if (i.crane) L.push({ label: 'מנוף', qty: 1, unitPrice: P.crane });
+        return L;
+      },
+      summary: i => `הובלת דירת ${i.rooms} חדרים, ${i.distance} ק״מ`,
+      terms: ['המחיר מבוסס על הפרטים שנמסרו ויעודכן אם יתגלו הבדלים בפועל.', 'ביטול עד 48 שעות לפני המועד ללא עלות.', 'תשלום ביום ההובלה: מזומן, העברה או ביט.'],
+      // המרה מתשובות תהליך השיחה של ההובלות (whatsapp-followup/flows.js) לשדות ההצעה
+      fromLead(a = {}) {
+        return { inputs: { elevFrom: a['מעלית'] !== 'אין מעלית' }, note: [a['מוצא'] && a['יעד'] ? `${a['מוצא']} ← ${a['יעד']}` : '', a['מתי'] || ''].filter(Boolean).join(' · ') };
+      }
+    };
+  }
+  const movers = makeMovers();
 
   // ---------- שיפוצים ----------
   const reno = {
@@ -95,5 +101,5 @@
     terms: ['חומרי הניקוי והציוד כלולים במחיר.', 'מועד העבודה מתואם מראש. ביטול עד 24 שעות לפני ללא עלות.']
   };
 
-  return { movers, reno, cleaning };
+  return { movers, reno, cleaning, makeMovers, MOVERS_PRICES };
 });

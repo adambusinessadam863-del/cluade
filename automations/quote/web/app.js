@@ -1,13 +1,15 @@
 (function () {
   const $ = id => document.getElementById(id);
   const st = document.createElement('style'); st.textContent = QuoteCore.CSS; document.head.append(st); // עיצוב ההצעה עצמה
-  const presets = Object.values(QuotePresets);
+  const D = window.QUOTE_DEFAULTS || {}; // הגדרות לקוח (clients/*/build-quote-site.js)
+  let presets = Object.values(QuotePresets).filter(p => p && p.fields);
+  if (D.only) presets = presets.filter(p => D.only.includes(p.id));
   let preset = presets[0], values = {};
   const store = {
     get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* מצב פרטי: ממשיכים בלי שמירה */ } }
   };
-  const settings = store.get('quote.settings', {});
+  const settings = { ...(D.settings || {}), ...store.get('quote.settings', {}) };
   ['bizName', 'bizPhone', 'bizColor', 'custName', 'custPhone', 'discount', 'valid'].forEach(id => { if (settings[id] != null) $(id).value = settings[id]; });
   if (settings.vat === false) $('vat').checked = false;
   let seq = store.get('quote.seq', 1);
@@ -57,6 +59,7 @@
     $('tabs').append(b);
   });
   $('tabs').firstChild.classList.add('on');
+  if (presets.length < 2) $('tabs').hidden = true;
   ['bizName', 'bizPhone', 'bizColor', 'custName', 'custPhone', 'discount', 'valid', 'vat'].forEach(id => $(id).addEventListener('input', render));
 
   $('wa').onclick = () => { const q = render(); window.open(QuoteCore.waLink($('custPhone').value, QuoteCore.renderText(q, biz())), '_blank', 'noopener'); bump(); };

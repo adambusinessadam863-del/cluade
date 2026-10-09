@@ -1,0 +1,22 @@
+{
+  "id": "yad-ofek",
+  "businessName": "יד אופק הובלות",
+  "timezone": "Asia/Jerusalem",
+  "features": { "leads": true, "reminders": true, "reviews": true, "quote": true },
+  "templates": {
+    "followupDay": "followup_day",
+    "followupLast": "followup_last",
+    "reminder": "move_reminder_v1",
+    "slot": "slot_available_v1",
+    "review": "review_request_v1"
+  },
+  "ownerReminderMin": 120,
+  "reminders": { "waitlist": false },
+  "reviews": {
+    "link": "https://TODO-REPLACE-WITH-GOOGLE-REVIEW-LINK.example/review",
+    "delayHours": 24,
+    "requireConsent": true
+  },
+  "quote": { "brandColor": "#b45309", "phone": "", "_note": "טלפון העסק וצבע המותג, לעדכן אחרי קבלת לוגו" },
+  "_note": "ערכים סודיים (טוקנים, מפתחות) נשמרים רק ב-.env ולא כאן. קישור הביקורת חייב להתחיל ב-https:// ולהיות הקישור האמיתי של העסק בגוגל."
+}

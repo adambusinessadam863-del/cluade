@@ -129,6 +129,7 @@ function createReminderService(userCfg, io = {}) {
 
   // --- רשימת המתנה ---
   async function offerSlot(appt) {
+    if (cfg.waitlist === false) return; // עסקים בלי רשימת המתנה (למשל הובלות): רק התראה לבעלים על הביטול
     const t = now();
     if (appt.start - t < cfg.minLeadMin * 60000) { await notify(`⚠️ התור של ${appt.name} (${fmtWhen(appt.start, tz).long}) בוטל קרוב מדי למועד, לא הוצע לרשימת המתנה.`); return; }
     const tried = new Set(Object.values(db.offers).filter(o => o.apptId === appt.id).map(o => o.phone));
@@ -193,6 +194,16 @@ function createReminderService(userCfg, io = {}) {
       await notify(`🔁 ${a.name} ביקש/ה להזיז: ${w.long}. טלפון: +${from}`);
     }
   }
+
+  // האם ההודעה הזו שייכת למודול הזה (לשימוש ה-gateway כשכמה אוטומציות חולקות מספר אחד)
+  function owns(msg) {
+    const { text, id } = extractInbound(msg), t = text.trim(), from = msg.from;
+    if (id && /^(CONFIRM|CANCEL|RESCHEDULE|TAKE|PASS):/.test(id)) return true;
+    if (Object.values(db.offers).some(o => o.phone === from && o.status === 'open')) return true;
+    const waiting = Object.values(db.appts).some(a => a.phone === from && (active(a) || a.status === 'cancelled') && (a.sent.r0 || a.sent.r1) && a.start > now() - 3600000);
+    return waiting && (CONFIRM.test(t) || CANCEL.test(t) || MOVE.test(t));
+  }
+  const optOut = phone => { db.optedOut[phone] = true; save(); };
 
   // --- תהליך ברקע ---
   async function tick() {
@@ -260,7 +271,7 @@ function createReminderService(userCfg, io = {}) {
     return chain;
   }
 
-  return { server, processPayload, tick, importAppointments, addWaitlist, stats, db: () => db };
+  return { server, processPayload, handleMessage, owns, optOut, save, tick, importAppointments, addWaitlist, stats, db: () => db };
 }
 
 module.exports = { createReminderService, zonedToUtc, fmtWhen, parseCsv, localParts, DEFAULTS };

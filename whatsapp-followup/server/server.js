@@ -35,7 +35,7 @@ function createApp(cfg, io = {}) {
   const fetchFn = io.fetch || fetch;
   const now = io.now || Date.now;
   const classify = io.classify || null;
-  const flow = FLOWS[cfg.flow];
+  const flow = io.flow || FLOWS[cfg.flow]; // io.flow: תהליך מותאם ללקוח (ראו clients/)
   if (!flow) throw new Error('FLOW לא מוכר: ' + cfg.flow);
 
   const fill = (s, extra = {}) => s.replace(/\{(\w+)\}/g, (_, k) => (k === 'biz' ? cfg.bizName : extra[k] ?? ''));
@@ -52,6 +52,7 @@ function createApp(cfg, io = {}) {
 
   // ---------- שליחה ----------
   async function sendWA(to, payload) {
+    if (io.wa) return io.wa.send(to, payload); // שליחה משותפת מה-gateway (תומכת גם בספקי WhatsApp)
     const url = `${cfg.graphBase}/${cfg.graphVersion}/${cfg.phoneId}/messages`;
     const res = await fetchFn(url, {
       method: 'POST',
@@ -64,6 +65,7 @@ function createApp(cfg, io = {}) {
   const sendText = (to, body) => sendWA(to, { type: 'text', text: { body, preview_url: false } });
 
   async function notifyOwner(text) {
+    if (io.notify) return io.notify(text);
     console.log('[owner]', text.replace(/\n/g, ' | '));
     if (!cfg.telegramToken || !cfg.telegramChat) return;
     const res = await fetchFn(`${cfg.telegramBase}/bot${cfg.telegramToken}/sendMessage`, {
@@ -97,7 +99,8 @@ function createApp(cfg, io = {}) {
   async function finish(lead) {
     lead.done = true; lead.doneAt = now();
     await sendText(lead.id, fill(flow.handoff, { name: lead.name, summary: summary(lead) }));
-    await notifyOwner(`${isHot(lead) ? '🔥 ליד חם' : '🟡 ליד'} מוואטסאפ\n${lead.name || lead.profileName || 'ללא שם'}\n${summary(lead)}\nטלפון: +${lead.id}`);
+    const extra = io.leadExtra ? await io.leadExtra(lead) : ''; // למשל הערכת מחיר פנימית לבעל העסק
+    await notifyOwner(`${isHot(lead) ? '🔥 ליד חם' : '🟡 ליד'} מוואטסאפ\n${lead.name || lead.profileName || 'ללא שם'}\n${summary(lead)}\nטלפון: +${lead.id}${extra ? '\n' + extra : ''}`);
   }
 
   async function advance(lead, text, option) {
@@ -256,7 +259,11 @@ function createApp(cfg, io = {}) {
     res.writeHead(404); res.end();
   });
 
-  return { server, processPayload, tick, leads: () => leads };
+  const optOut = phone => {
+    if (!leads[phone]) leads[phone] = { id: phone, step: -1, answers: {}, score: 0 };
+    leads[phone].optedOut = true; save();
+  };
+  return { server, processPayload, tick, handleMessage, optOut, save, leads: () => leads };
 }
 
 module.exports = { createApp, loadConfig };

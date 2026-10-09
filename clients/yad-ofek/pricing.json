@@ -1,0 +1,10 @@
+{
+  "confirmed": false,
+  "_note": "מחירון לדוגמה בלבד! יש להחליף במחירון האמיתי של יד אופק ואז לשנות confirmed ל-true. כל עוד false, הערכת המחיר לא נשלחת לבעלים וכלי ההצעות מציג אזהרה.",
+  "prices": {
+    "base": [0, 900, 1200, 1500, 1900, 2300, 2800, 3300, 3800, 4300, 4800],
+    "freeKm": 20, "perKm": 4, "perFloor": 80,
+    "packingPartialPct": 0.15, "packingFullPct": 0.35,
+    "piano": 500, "safe": 400, "assemblyPerRoom": 150, "crane": 650
+  }
+}

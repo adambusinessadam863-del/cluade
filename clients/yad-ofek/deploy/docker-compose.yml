@@ -1,0 +1,30 @@
+# הרצה על שרת: cp .env.example .env (ממלאים), ואז: docker compose up -d --build
+# מהתיקייה clients/yad-ofek/deploy. תעודת HTTPS מגיעה אוטומטית מ-Caddy (נדרש דומיין שמצביע על השרת).
+services:
+  gateway:
+    build:
+      context: ../../..
+      dockerfile: clients/yad-ofek/deploy/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      CLIENT: yad-ofek
+    volumes:
+      - ./data:/data
+    expose:
+      - "3000"
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on:
+      - gateway
+volumes:
+  caddy_data:

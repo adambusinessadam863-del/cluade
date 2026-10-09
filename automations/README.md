@@ -8,8 +8,12 @@
 | `reminders/` | תזכורות תורים והחזרת שעות מרשימת המתנה | `reminders/demo.html` | `cd reminders && node test.js` |
 | `reviews/` | בקשות ביקורת (ללא סינון) וטיוטות תשובה בעזרת Claude | `reviews/demo.html` | `cd reviews && node test.js` |
 | `invoices/` (התחלה) | חילוץ חשבוניות לטבלה, כולל בדיקת מספר הקצאה | אין עדיין | `cd invoices && node test.js` |
+| `gateway/` | נתב: webhook אחד לכל האוטומציות של לקוח (`cd gateway && node test.js`) | | `cd gateway && node test.js` |
 | `common/` | שליחה ל-WhatsApp Cloud API, התראות טלגרם, אימות חתימה | | |
 | `assets/` | עיצוב משותף לטלפונים בהדמיות | | |
+
+## לקוח ראשון
+חבילת ההפעלה של יד אופק הובלות נמצאת ב-`../clients/yad-ofek` (הגדרות, פריסה, תבניות, עלויות, הצעה וספר הפעלה).
 
 ## מסמכים
 - **`PITCH.md`**: איך מוכרים, מחירים, תסריטי שיחה, מיילים והתנגדויות.
@@ -23,6 +27,6 @@ Node 20.6 ומעלה. הכלי `quote/web` ודפי ההדמיה הם קבצי �
 
 ## הרצת כל הבדיקות
 ```bash
-for d in quote reminders reviews invoices; do (cd $d && node test.js) || exit 1; done
+for d in quote reminders reviews invoices gateway; do (cd $d && node test.js) || exit 1; done
 (cd ../whatsapp-followup/server && node test.js)
 ```

@@ -76,6 +76,12 @@ function createReviewService(userCfg, io = {}) {
     if (visit && !visit.ack) { visit.ack = true; await wa.sendText(from, 'תודה ששיתפת! העברנו לבעלים ונחזור אליך אישית 🙏'); }
   }
 
+  // הודעה שייכת לכאן אם יש בקשת ביקורת שנשלחה ללקוח הזה בשבוע האחרון
+  function owns(msg) {
+    return Object.values(db.visits).some(v => v.phone === msg.from && v.status === 'sent' && now() - v.sentAt < 7 * 86400000);
+  }
+  const optOut = phone => { db.optedOut[phone] = true; save(); };
+
   const seen = new Set(); let chain = Promise.resolve();
   function processPayload(payload) {
     chain = chain.then(async () => {
@@ -97,7 +103,7 @@ function createReviewService(userCfg, io = {}) {
       return false;
     }
   });
-  return { server, processPayload, tick, importVisits, stats, db: () => db };
+  return { server, processPayload, handleMessage, owns, optOut, save, tick, importVisits, stats, db: () => db };
 }
 
 module.exports = { createReviewService, DEFAULTS };
