@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>הדמיות אוטומציה</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Suez+One&display=swap">
+<style>
+/* פריסה: כותרת עם משפט ראשי, מתחתיה ארבעה כרטיסי הדמיה בשורה שמתקפלת, ובסוף שלושה צעדי עבודה */
+:root{
+  --bg:#eef2f0; --surface:#ffffff; --ink:#13211e; --mut:#58665f; --line:#d3dbd7;
+  --accent:#0b6b5c; --accent-ink:#ffffff; --chip:#e1ede9;
+  --font-body:"Heebo",system-ui,"Segoe UI",Arial,sans-serif; --font-display:"Suez One","Heebo",system-ui,serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1614; --surface:#16211e; --ink:#e8f0ed; --mut:#9bb0a8; --line:#2a3a35;
+  --accent:#4fd1b5; --accent-ink:#06211b; --chip:#1d2e29; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1614; --surface:#16211e; --ink:#e8f0ed; --mut:#9bb0a8; --line:#2a3a35;
+  --accent:#4fd1b5; --accent-ink:#06211b; --chip:#1d2e29; color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--font-body);direction:rtl;padding-inline:16px;padding-block:28px 40px}
+.wrap{max-width:980px;margin-inline:auto;display:flex;flex-direction:column;gap:32px}
+.eyebrow{margin:0 0 6px;color:var(--accent);font-weight:700;font-size:.85rem;letter-spacing:.04em}
+h1{margin:0 0 10px;font:400 clamp(1.7rem,4.5vw,2.5rem)/1.2 var(--font-display);text-wrap:balance;max-width:22ch}
+.lead{margin:0;color:var(--mut);max-width:62ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.tag{align-self:flex-start;background:var(--chip);color:var(--ink);font-size:.78rem;font-weight:500;padding:2px 10px;border-radius:999px}
+.card h2{margin:0;font-size:1.2rem;line-height:1.3}
+.card p{margin:0;color:var(--mut);font-size:.95rem}
+.card ul{margin:0;padding-inline-start:18px;color:var(--mut);font-size:.9rem;display:grid;gap:2px}
+.open{margin-top:auto;align-self:flex-start;display:inline-block;background:var(--accent);color:var(--accent-ink);text-decoration:none;font-weight:700;padding:9px 18px;border-radius:8px}
+.open:hover,.open:focus-visible{outline:3px solid var(--line);outline-offset:2px}
+h3{margin:0 0 8px;font-size:1.1rem}
+ol{margin:0;padding-inline-start:22px;display:grid;gap:6px;color:var(--ink);max-width:68ch}
+.foot{color:var(--mut);font-size:.85rem;border-top:1px solid var(--line);padding-top:14px}
+</style>
+
+<main class="wrap">
+  <header>
+    <p class="eyebrow">אוטומציות לעסקים קטנים</p>
+    <h1>ארבע הדמיות. לחצו ותראו איך זה נראה ללקוח.</h1>
+    <p class="lead">כל הדמיה רצה בדפדפן, בלי חיבור לוואטסאפ. בתוך כל אחת אפשר לכתוב את שם העסק של הלקוח לפני שמראים לו.</p>
+  </header>
+
+  <section class="grid" aria-label="ההדמיות">
+    <article class="card">
+      <span class="tag">שיחה בוואטסאפ</span>
+      <h2>מענה ומעקב לידים</h2>
+      <p>הלקוח כותב בערב ומקבל מענה מיידי. אתם מקבלים כרטיס ליד מסודר, ואם הלקוח נעלם יוצאות עד שלוש הודעות מעקב.</p>
+      <ul><li>נהיגה, שיפוצים, פילאטיס, הובלות</li><li>דילוג בזמן כדי לראות את המעקבים</li></ul>
+      <a class="open" href="whatsapp-followup/index.html">פתח הדמיה</a>
+    </article>
+    <article class="card">
+      <span class="tag">כלי שאפשר להשתמש בו</span>
+      <h2>הצעת מחיר מיידית</h2>
+      <p>ממלאים כמה פרטים בטלפון ומקבלים הצעה מעוצבת עם מע״מ ותוקף, לשליחה בוואטסאפ או להדפסה.</p>
+      <ul><li>הובלות, שיפוצים, ניקיון</li><li>המחירים בדוגמה להחלפה במחירון של העסק</li></ul>
+      <a class="open" href="automations/quote/web/index.html">פתח את הכלי</a>
+    </article>
+    <article class="card">
+      <span class="tag">שיחה בוואטסאפ</span>
+      <h2>תזכורות תורים והחזרת שעות</h2>
+      <p>תזכורת עם שלושה כפתורים. מי שמבטל משחרר שעה, והיא מוצעת אוטומטית למי שברשימת ההמתנה.</p>
+      <ul><li>שלושה טלפונים: לקוחה, בעל העסק, רשימת המתנה</li></ul>
+      <a class="open" href="automations/reminders/demo.html">פתח הדמיה</a>
+    </article>
+    <article class="card">
+      <span class="tag">שיחה ודף עבודה</span>
+      <h2>ביקורות ומוניטין</h2>
+      <p>בקשת ביקורת לכל הלקוחות באותו נוסח, משוב פרטי שמגיע אליכם, וטיוטות תשובה לביקורות קיימות.</p>
+      <ul><li>דוגמת דף טיוטות עם סימון ביקורות רגישות</li></ul>
+      <a class="open" href="automations/reviews/demo.html">פתח הדמיה</a>
+    </article>
+  </section>
+
+  <section>
+    <h3>איך להשתמש בפגישה עם לקוח</h3>
+    <ol>
+      <li>פתחו הדמיה והקלידו את שם העסק של הלקוח בשדה שבראש העמוד.</li>
+      <li>לחצו על התשובות כמו לקוח, ודלגו בזמן כדי להראות את המעקבים.</li>
+      <li>הראו את הטלפונים: מה הלקוח רואה ומה בעל העסק מקבל.</li>
+    </ol>
+  </section>
+
+  <p class="foot">ההדמיות להמחשה בלבד ואינן מחוברות לוואטסאפ, לגוגל או ליומן. השמות והמספרים בדוגמאות בדויים. הטיוטות בדף הביקורות נכתבו ידנית כדי להראות את הפורמט.</p>
+</main>
+</html>

@@ -37,3 +37,5 @@ h2{margin:0 0 12px;font-size:1.05rem}
   #preview{position:absolute;inset:0}
   @page{size:A4;margin:12mm}
 }
+
+.home{display:inline-block;margin-bottom:6px;color:inherit;opacity:.7;font-size:.9rem;text-decoration:none}.home:hover{opacity:1;text-decoration:underline}
